@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantum Electricity Demand Forecasting | Solar Flare Plasma</title>
+  <meta name="description" content="Predicting next hour's regional grid electricity demand (MW) using a Hybrid Variational Quantum Circuit regressor in PennyLane compared with Linear Regression.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <!-- Ambient background blobs and film-grain overlay -->
+  <div class="ambient-blobs" aria-hidden="true">
+    <div class="blob blob-amber"></div>
+    <div class="blob blob-coral"></div>
+    <div class="blob blob-magenta"></div>
+  </div>
+  <div class="film-grain" aria-hidden="true"></div>
+
+  <!-- Background 3D Canvas (Full Bleed) -->
+  <canvas id="scene"></canvas>
+
+  <main class="content-wrapper">
+    <!-- SECTION 1: HERO -->
+    <section id="hero" class="hero-section">
+      <div class="hero-content reveal">
+        <div class="status-badge">
+          <span class="status-pulse"></span>
+          <span class="status-text">4-Qubit Variational Quantum Circuit</span>
+        </div>
+        <h1 class="hero-title">Forecast the grid with qubits.</h1>
+        <p class="hero-subtitle">
+          Predicting next hour's regional electricity demand (MW) from previous 4 hourly load values using parameterized quantum rotation gates compared with classical linear regression.
+        </p>
+        <div class="hero-actions">
+          <a href="#predict" class="btn btn-primary">
+            <span>Explore Inference</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+          </a>
+          <a href="#results" class="btn btn-secondary">View Benchmarks</a>
+        </div>
+      </div>
+      <a href="#predict" class="scroll-cue" aria-label="Scroll to prediction interface">
+        <span class="scroll-cue-text">SCROLL</span>
+        <div class="scroll-cue-indicator"></div>
+      </a>
+    </section>
+
+    <!-- SECTION 2: PREDICT -->
+    <section id="predict" class="section-container reveal">
+      <div class="section-header">
+        <span class="section-tag">LIVE INFERENCE</span>
+        <h2 class="section-title">Hourly Demand Forecasting</h2>
+        <p class="section-desc">Enter the previous 4 consecutive hourly megawatt load values (t-4 to t-1) to execute real-time PennyLane quantum circuit simulation.</p>
+      </div>
+
+      <div class="predict-card card-glow">
+        <form id="predict-form" class="predict-form" onsubmit="return false;">
+          <div class="inputs-grid">
+            <div class="input-group">
+              <label for="v0" class="input-label">
+                <span class="label-step">t-4h</span>
+                <span class="label-desc">4 Hours Ago</span>
+              </label>
+              <div class="input-wrapper">
+                <input type="number" id="v0" step="any" min="0" max="100000" placeholder="14500" required>
+                <span class="input-unit">MW</span>
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label for="v1" class="input-label">
+                <span class="label-step">t-3h</span>
+                <span class="label-desc">3 Hours Ago</span>
+              </label>
+              <div class="input-wrapper">
+                <input type="number" id="v1" step="any" min="0" max="100000" placeholder="14800" required>
+                <span class="input-unit">MW</span>
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label for="v2" class="input-label">
+                <span class="label-step">t-2h</span>
+                <span class="label-desc">2 Hours Ago</span>
+              </label>
+              <div class="input-wrapper">
+                <input type="number" id="v2" step="any" min="0" max="100000" placeholder="15100" required>
+                <span class="input-unit">MW</span>
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label for="v3" class="input-label">
+                <span class="label-step">t-1h</span>
+                <span class="label-desc">Previous Hour</span>
+              </label>
+              <div class="input-wrapper">
+                <input type="number" id="v3" step="any" min="0" max="100000" placeholder="15000" required>
+                <span class="input-unit">MW</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="predict-actions">
+            <button id="go" type="button" class="btn btn-primary btn-large">
+              <span class="btn-text">Forecast next hour</span>
+              <span class="btn-spinner" aria-hidden="true"></span>
+            </button>
+            <div id="predict-feedback" class="feedback-msg" role="status"></div>
+          </div>
+        </form>
+
+        <div class="results-grid">
+          <div class="result-card result-vqc card-glow" id="card-vqc">
+            <div class="result-badge">QUANTUM REGRESSOR</div>
+            <h3 class="result-title">VQC Prediction</h3>
+            <div class="result-display">
+              <span id="out-vqc" class="result-value">--</span>
+            </div>
+            <div class="result-meta">AngleEmbedding(RX) + StronglyEntanglingLayers(2)</div>
+          </div>
+
+          <div class="result-card result-lin card-glow" id="card-lin">
+            <div class="result-badge baseline-badge">CLASSICAL BASELINE</div>
+            <h3 class="result-title">Linear Regression</h3>
+            <div class="result-display">
+              <span id="out-lin" class="result-value">--</span>
+            </div>
+            <div class="result-meta">Ordinary Least Squares on Normalized Lags</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: RESULTS & BENCHMARKS -->
+    <section id="results" class="section-container reveal">
+      <div class="section-header">
+        <span class="section-tag">BENCHMARKS & CONVERGENCE</span>
+        <h2 class="section-title">Model Evaluation & Metrics</h2>
+        <p class="section-desc">Chronological 80/20 train/test evaluation on 1,500 real grid hourly observations from the PJM Appalachian Power (AEP) dataset.</p>
+      </div>
+
+      <div class="table-card card-glow">
+        <div class="table-wrapper">
+          <table id="metrics" class="metrics-table">
+            <thead>
+              <tr>
+                <th scope="col">Metric</th>
+                <th scope="col" class="th-vqc">VQC (Quantum)</th>
+                <th scope="col" class="th-lin">Linear Regression</th>
+              </tr>
+            </thead>
+            <tbody id="metrics-body">
+              <tr>
+                <td>MAE</td>
+                <td class="mono-num vqc-accent">--</td>
+                <td class="mono-num lin-accent">--</td>
+              </tr>
+              <tr>
+                <td>RMSE</td>
+                <td class="mono-num vqc-accent">--</td>
+                <td class="mono-num lin-accent">--</td>
+              </tr>
+              <tr>
+                <td>R² Score</td>
+                <td class="mono-num vqc-accent">--</td>
+                <td class="mono-num lin-accent">--</td>
+              </tr>
+              <tr>
+                <td>Training Time</td>
+                <td class="mono-num vqc-accent">--</td>
+                <td class="mono-num lin-accent">--</td>
+              </tr>
+              <tr>
+                <td>Parameters</td>
+                <td class="mono-num vqc-accent">--</td>
+                <td class="mono-num lin-accent">--</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="charts-grid">
+        <div class="chart-card card-glow">
+          <div class="chart-header">
+            <h3 class="chart-title">Test Series Fit</h3>
+            <span class="chart-badge">Actual vs VQC (First 150 hrs)</span>
+          </div>
+          <div class="chart-container">
+            <canvas id="chart-fit"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card card-glow">
+          <div class="chart-header">
+            <h3 class="chart-title">Optimization Loss</h3>
+            <span class="chart-badge">MSE vs 80 Epochs</span>
+          </div>
+          <div class="chart-container">
+            <canvas id="chart-loss"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card card-glow chart-card-wide">
+          <div class="chart-header">
+            <h3 class="chart-title">Error Comparison (MW)</h3>
+            <span class="chart-badge">MAE & RMSE Comparison</span>
+          </div>
+          <div class="chart-container">
+            <canvas id="chart-cmp"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: METHOD -->
+    <section id="method" class="section-container reveal">
+      <div class="section-header">
+        <span class="section-tag">QUANTUM ARCHITECTURE</span>
+        <h2 class="section-title">Circuit Method & Complexity</h2>
+        <p class="section-desc">Rigorous formulation of the 4-qubit parameterized quantum ansatz and state vector evolution.</p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step-card card-glow">
+          <div class="step-num">01</div>
+          <h3 class="step-title">Encode</h3>
+          <p class="step-body">
+            Feature mapping via <code>AngleEmbedding</code>: each lag value \(x_i \in [0, 1]\) rotates qubit \(i\) around the X-axis by angle \(\theta_i = \pi \cdot x_i\) from ground state \(|0\rangle\).
+          </p>
+        </div>
+
+        <div class="step-card card-glow">
+          <div class="step-num">02</div>
+          <h3 class="step-title">Entangle</h3>
+          <p class="step-body">
+            2 layers of <code>StronglyEntanglingLayers</code> parameterized by 24 trainable Euler rotation angles (\(2 \times 4 \times 3\)) with circular CNOT entangling gates generating non-local quantum correlations.
+          </p>
+        </div>
+
+        <div class="step-card card-glow">
+          <div class="step-num">03</div>
+          <h3 class="step-title">Measure</h3>
+          <p class="step-body">
+            Hermitian observable expectation value \(\langle Z_0 \rangle \in [-1, 1]\) evaluated via PennyLane's <code>diff_method="backprop"</code>, inverse transformed to physical Megawatts (MW).
+          </p>
+        </div>
+      </div>
+
+      <div class="complexity-chips-container">
+        <div class="complexity-chip card-glow">
+          <span class="chip-label">Time Complexity</span>
+          <code class="chip-code">O(E · n · L · N · 2^n)</code>
+        </div>
+        <div class="complexity-chip card-glow">
+          <span class="chip-label">Space Complexity</span>
+          <code class="chip-code">O(2^n + N · n + n · L)</code>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="app-footer">
+      <div class="footer-content">
+        <p class="footer-author">Adithya Varman Nandhivarman</p>
+        <p class="footer-note">Quantum AI-based Electricity Demand Forecasting • Capstone Project</p>
+      </div>
+    </footer>
+  </main>
+
+  <!-- Pinned CDN Chart.js & Application ES Modules -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script type="module" src="/scene.js"></script>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
