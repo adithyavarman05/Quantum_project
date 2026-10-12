@@ -53,7 +53,7 @@
       <div class="section-header">
         <span class="section-tag">LIVE INFERENCE</span>
         <h2 class="section-title">Hourly Demand Forecasting</h2>
-        <p class="section-desc">Enter the previous 4 consecutive hourly megawatt load values (t-4 to t-1) to execute real-time PennyLane quantum circuit simulation.</p>
+        <p class="section-desc">Enter the historical demand lag values [t-1h, t-2h, t-3h, t-24h] to execute real-time PennyLane quantum circuit simulation. <span class="input-hint-text">(Previous hour, 2 hours ago, 3 hours ago, same hour yesterday)</span></p>
       </div>
 
       <div class="predict-card card-glow">
@@ -61,44 +61,44 @@
           <div class="inputs-grid">
             <div class="input-group">
               <label for="v0" class="input-label">
-                <span class="label-step">t-4h</span>
-                <span class="label-desc">4 Hours Ago</span>
+                <span class="label-step" id="lbl-step-0">t-1h</span>
+                <span class="label-desc" id="lbl-desc-0">Previous Hour</span>
               </label>
               <div class="input-wrapper">
-                <input type="number" id="v0" step="any" min="0" max="100000" placeholder="14500" required>
+                <input type="number" id="v0" step="any" min="0" max="100000" placeholder="15000" required>
                 <span class="input-unit">MW</span>
               </div>
             </div>
 
             <div class="input-group">
               <label for="v1" class="input-label">
-                <span class="label-step">t-3h</span>
-                <span class="label-desc">3 Hours Ago</span>
+                <span class="label-step" id="lbl-step-1">t-2h</span>
+                <span class="label-desc" id="lbl-desc-1">2 Hours Ago</span>
               </label>
               <div class="input-wrapper">
-                <input type="number" id="v1" step="any" min="0" max="100000" placeholder="14800" required>
+                <input type="number" id="v1" step="any" min="0" max="100000" placeholder="15100" required>
                 <span class="input-unit">MW</span>
               </div>
             </div>
 
             <div class="input-group">
               <label for="v2" class="input-label">
-                <span class="label-step">t-2h</span>
-                <span class="label-desc">2 Hours Ago</span>
+                <span class="label-step" id="lbl-step-2">t-3h</span>
+                <span class="label-desc" id="lbl-desc-2">3 Hours Ago</span>
               </label>
               <div class="input-wrapper">
-                <input type="number" id="v2" step="any" min="0" max="100000" placeholder="15100" required>
+                <input type="number" id="v2" step="any" min="0" max="100000" placeholder="14800" required>
                 <span class="input-unit">MW</span>
               </div>
             </div>
 
             <div class="input-group">
               <label for="v3" class="input-label">
-                <span class="label-step">t-1h</span>
-                <span class="label-desc">Previous Hour</span>
+                <span class="label-step" id="lbl-step-3">t-24h</span>
+                <span class="label-desc" id="lbl-desc-3">Same Hour Yesterday</span>
               </label>
               <div class="input-wrapper">
-                <input type="number" id="v3" step="any" min="0" max="100000" placeholder="15000" required>
+                <input type="number" id="v3" step="any" min="0" max="100000" placeholder="14500" required>
                 <span class="input-unit">MW</span>
               </div>
             </div>
@@ -120,7 +120,7 @@
             <div class="result-display">
               <span id="out-vqc" class="result-value">--</span>
             </div>
-            <div class="result-meta">AngleEmbedding(RX) + StronglyEntanglingLayers(2)</div>
+            <div class="result-meta">AngleEmbedding(RY) + StronglyEntanglingLayers(3)</div>
           </div>
 
           <div class="result-card result-lin card-glow" id="card-lin">
@@ -228,9 +228,9 @@
       <div class="steps-grid">
         <div class="step-card card-glow">
           <div class="step-num">01</div>
-          <h3 class="step-title">Encode</h3>
+          <h3 class="step-title">RY angle encoding</h3>
           <p class="step-body">
-            Feature mapping via <code>AngleEmbedding</code>: each lag value \(x_i \in [0, 1]\) rotates qubit \(i\) around the X-axis by angle \(\theta_i = \pi \cdot x_i\) from ground state \(|0\rangle\).
+            Feature mapping via <code>AngleEmbedding</code>: each lag value \(x_i \in [0, 1]\) rotates qubit \(i\) around the Y-axis by angle \(\theta_i = \pi \cdot x_i\) from ground state \(|0\rangle\), keeping state vectors initially in the X-Z plane.
           </p>
         </div>
 
@@ -238,7 +238,7 @@
           <div class="step-num">02</div>
           <h3 class="step-title">Entangle</h3>
           <p class="step-body">
-            2 layers of <code>StronglyEntanglingLayers</code> parameterized by 24 trainable Euler rotation angles (\(2 \times 4 \times 3\)) with circular CNOT entangling gates generating non-local quantum correlations.
+            3 layers of <code>StronglyEntanglingLayers</code> parameterized by 36 trainable Euler rotation angles (\(3 \times 4 \times 3\)) with circular CNOT entangling gates generating non-local quantum correlations.
           </p>
         </div>
 
@@ -266,7 +266,7 @@
     <!-- FOOTER -->
     <footer class="app-footer">
       <div class="footer-content">
-        <p class="footer-author">Adithya Varman Nandhivarman</p>
+        <p class="footer-author">Ruhan T (CH.SC.U4CSE24240) &amp; Adithya Varman Nandhivarman (CH.SC.U4CSE24257)</p>
         <p class="footer-note">Quantum AI-based Electricity Demand Forecasting • Capstone Project</p>
       </div>
     </footer>

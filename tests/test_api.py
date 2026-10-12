@@ -36,12 +36,14 @@ def test_results_shape():
 
 
 def test_sample():
-    """Verify GET /api/sample returns 4 numbers."""
+    """Verify GET /api/sample returns 4 numbers and correct labels."""
     response = client.get("/api/sample")
     assert response.status_code == 200
     data = response.json()
     assert "values" in data
     assert len(data["values"]) == 4
+    assert "labels" in data
+    assert data["labels"] == ["t-1h", "t-2h", "t-3h", "t-24h"]
 
 
 def test_valid_predict():

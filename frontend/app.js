@@ -308,6 +308,12 @@ async function loadSampleValues() {
         if (inp) inp.value = Math.round(val);
       });
     }
+    if (Array.isArray(data.labels) && data.labels.length === 4) {
+      data.labels.forEach((lbl, idx) => {
+        const stepEl = document.getElementById(`lbl-step-${idx}`);
+        if (stepEl) stepEl.textContent = lbl;
+      });
+    }
   } catch (err) {
     const feedback = document.getElementById('predict-feedback');
     if (feedback) {

@@ -11,6 +11,7 @@ class HealthResponse(BaseModel):
 
 class SampleResponse(BaseModel):
     values: List[float]
+    labels: List[str] = ["t-1h", "t-2h", "t-3h", "t-24h"]
 
 
 class PredictRequest(BaseModel):

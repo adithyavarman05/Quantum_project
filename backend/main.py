@@ -54,7 +54,7 @@ def get_health():
 def get_sample():
     """Return latest 4 hourly demand sample values."""
     ensure_model_loaded()
-    return SampleResponse(values=service.get_sample())
+    return SampleResponse(**service.get_sample())
 
 
 @app.post("/api/predict", response_model=PredictResponse)

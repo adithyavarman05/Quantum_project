@@ -27,11 +27,13 @@ def is_model_loaded() -> bool:
     return _artifacts is not None
 
 
-def get_sample() -> List[float]:
-    """Return the last 4 known hourly demand values from the series."""
+def get_sample() -> Dict[str, Any]:
+    """Return the last 4 known hourly demand values and labels from the series."""
     if _artifacts is None:
         raise RuntimeError("Artifacts not loaded.")
-    return [float(x) for x in _artifacts["last_values"]]
+    values = [float(x) for x in _artifacts.get("last_values", [])]
+    labels = _artifacts.get("labels", ["t-1h", "t-2h", "t-3h", "t-24h"])
+    return {"values": values, "labels": labels}
 
 
 def predict(values: List[float]) -> Dict[str, Any]:
