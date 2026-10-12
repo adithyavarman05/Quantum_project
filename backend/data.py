@@ -1,33 +1,40 @@
 """Data loading, feature engineering, and preprocessing."""
 from pathlib import Path
-from typing import Tuple
+from typing import List, Tuple
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
-from backend.config import DATA_PATH, N_HOURS, N_QUBITS
+from backend.config import DATA_PATH, LAGS, N_ROWS
 
 
-def load_series(path: Path = DATA_PATH, n_hours: int = N_HOURS) -> np.ndarray:
-    """Load first n_hours electricity demand from CSV, sorted chronologically."""
+def load_series(path: Path = DATA_PATH, n_rows: int = N_ROWS) -> np.ndarray:
+    """Load electricity demand with cleaning: parse, sort, drop duplicates, strict hourly reindex, interpolate, drop <= 0."""
     if path.exists():
         df = pd.read_csv(path, parse_dates=["Datetime"]).sort_values("Datetime")
-        return df["AEP_MW"].values[:n_hours].astype(float)
+        df = df.drop_duplicates(subset=["Datetime"], keep="first")
+        df = df.set_index("Datetime")
+        full_idx = pd.date_range(start=df.index.min(), end=df.index.max(), freq="1h")
+        df = df.reindex(full_idx)
+        df["AEP_MW"] = df["AEP_MW"].interpolate(method="linear")
+        df = df[df["AEP_MW"] > 0]
+        return df["AEP_MW"].values[:n_rows].astype(float)
 
     # Fallback synthetic periodic series if CSV is unavailable
-    t = np.arange(n_hours)
+    t = np.arange(n_rows)
     return (
         500.0
         + 0.05 * t
         + 80.0 * np.sin(2 * np.pi * t / 24.0 - 1.5)
         + 40.0 * np.sin(2 * np.pi * t / (24.0 * 7.0))
-        + np.random.normal(0, 8, n_hours)
+        + np.random.normal(0, 8, n_rows)
     ).astype(float)
 
 
-def make_lags(series: np.ndarray, n_lags: int = N_QUBITS) -> Tuple[np.ndarray, np.ndarray]:
-    """Create sliding-window lag features: X[i] = series[i-n_lags:i], y[i] = series[i]."""
-    X = np.array([series[i - n_lags : i] for i in range(n_lags, len(series))], dtype=float)
-    y = series[n_lags:].astype(float)
+def make_lags(series: np.ndarray, lags: List[int] = LAGS) -> Tuple[np.ndarray, np.ndarray]:
+    """Create lag features: X[t] = [d(t-1), d(t-2), d(t-3), d(t-24)] for each t >= max(lags), y[t] = d(t)."""
+    max_lag = max(lags)
+    X = np.array([[series[t - lag] for lag in lags] for t in range(max_lag, len(series))], dtype=float)
+    y = series[max_lag:].astype(float)
     return X, y
 
 

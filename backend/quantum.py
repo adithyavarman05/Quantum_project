@@ -3,7 +3,7 @@ from typing import List, Tuple
 import numpy as np
 import pennylane as qml
 from pennylane import numpy as pnp
-from backend.config import N_QUBITS, N_LAYERS
+from backend.config import N_QUBITS
 
 # Default simulator device
 dev = qml.device("default.qubit", wires=N_QUBITS)
@@ -11,8 +11,8 @@ dev = qml.device("default.qubit", wires=N_QUBITS)
 
 @qml.qnode(dev, interface="autograd", diff_method="backprop")
 def vqc(x, weights):
-    """4-qubit VQC: AngleEmbedding (RX, angle=pi*x) + StronglyEntanglingLayers, measure Z0."""
-    qml.AngleEmbedding(np.pi * x, wires=range(N_QUBITS), rotation="X")
+    """4-qubit VQC: AngleEmbedding (RY, angle=pi*x) + StronglyEntanglingLayers, measure Z0."""
+    qml.AngleEmbedding(np.pi * x, wires=range(N_QUBITS), rotation="Y")
     qml.StronglyEntanglingLayers(weights, wires=range(N_QUBITS))
     return qml.expval(qml.PauliZ(0))
 
@@ -29,8 +29,8 @@ def mse_loss(weights, X, y):
 
 @qml.qnode(dev)
 def _circuit_encoded(x):
-    """Expectation values after AngleEmbedding encoding only."""
-    qml.AngleEmbedding(np.pi * x, wires=range(N_QUBITS), rotation="X")
+    """Expectation values after AngleEmbedding encoding only (RY)."""
+    qml.AngleEmbedding(np.pi * x, wires=range(N_QUBITS), rotation="Y")
     return [
         qml.expval(op(w))
         for w in range(N_QUBITS)
@@ -41,7 +41,7 @@ def _circuit_encoded(x):
 @qml.qnode(dev)
 def _circuit_final(x, weights):
     """Expectation values after encoding and StronglyEntanglingLayers."""
-    qml.AngleEmbedding(np.pi * x, wires=range(N_QUBITS), rotation="X")
+    qml.AngleEmbedding(np.pi * x, wires=range(N_QUBITS), rotation="Y")
     qml.StronglyEntanglingLayers(weights, wires=range(N_QUBITS))
     return [
         qml.expval(op(w))

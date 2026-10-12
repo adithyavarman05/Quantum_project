@@ -12,6 +12,7 @@ from backend.config import (
     ARTIFACTS_DIR,
     ARTIFACTS_PATH,
     EPOCHS,
+    LAGS,
     LR,
     N_LAYERS,
     N_QUBITS,
@@ -97,7 +98,8 @@ def train_and_evaluate() -> Dict[str, Any]:
         "actual": [float(val) for val in y_te],
         "vqc_pred": [float(val) for val in p_vqc],
         "linear_pred": [float(val) for val in p_lr],
-        "last_values": [float(val) for val in series[-N_QUBITS:]],
+        "last_values": [float(series[-lag]) for lag in LAGS],
+        "labels": ["t-1h", "t-2h", "t-3h", "t-24h"],
     }
     joblib.dump(artifacts, ARTIFACTS_PATH)
 

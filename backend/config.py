@@ -1,11 +1,14 @@
 """Configuration constants and paths for Quantum Electricity Demand Forecasting."""
 from pathlib import Path
+from typing import List
 
 # Quantum circuit and training hyperparameters
-N_QUBITS: int = 4
-N_LAYERS: int = 2
-N_HOURS: int = 1500
-EPOCHS: int = 80
+LAGS: List[int] = [1, 2, 3, 24]
+N_QUBITS: int = len(LAGS)
+N_LAYERS: int = 3
+N_ROWS: int = 2000
+N_HOURS: int = N_ROWS  # alias for backwards compatibility
+EPOCHS: int = 120
 LR: float = 0.05
 SEED: int = 42
 
